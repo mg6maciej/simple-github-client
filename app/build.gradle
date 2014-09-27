@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.champeau.gradle.groovy-android'
 
 android {
     compileSdkVersion 19
@@ -34,4 +35,5 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.6.0'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'de.greenrobot:eventbus:2.2.1'
+    compile 'org.codehaus.groovy:groovy:2.4.0-beta-3:grooid'
 }
