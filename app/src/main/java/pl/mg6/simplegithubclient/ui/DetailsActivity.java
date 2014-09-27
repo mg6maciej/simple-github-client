@@ -3,10 +3,14 @@ package pl.mg6.simplegithubclient.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.parceler.Parcel;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +51,8 @@ public final class DetailsActivity extends BaseActivity {
         setContentView(R.layout.details_activity);
         this.idol = getIntent().getParcelableExtra(EXTRA_IDOL);
         if (savedInstanceState != null) {
-            this.repos = savedInstanceState.getParcelableArrayList(KEY_REPOS);
+            Parcelable wrappedRepos = savedInstanceState.getParcelable(KEY_REPOS);
+            this.repos = Parcels.unwrap(wrappedRepos);
         }
         eventBus.register(this);
         initReposView();
@@ -105,7 +110,8 @@ public final class DetailsActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(KEY_REPOS, repos);
+        Parcelable wrappedRepos = Parcels.wrap(repos);
+        outState.putParcelable(KEY_REPOS, wrappedRepos);
     }
 
     @Override

@@ -2,7 +2,7 @@ package pl.mg6.simplegithubclient.data;
 
 import android.os.Parcel;
 
-public final class Repo implements android.os.Parcelable {
+public final class Repo {
 
     private final long id;
     private final String name;
@@ -97,36 +97,4 @@ public final class Repo implements android.os.Parcelable {
         }
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.id);
-        dest.writeString(this.name);
-        dest.writeString(this.description);
-        dest.writeInt(this.stargazersCount);
-        dest.writeInt(this.watchersCount);
-    }
-
-    private Repo(Parcel in) {
-        this.id = in.readLong();
-        this.name = in.readString();
-        this.description = in.readString();
-        this.stargazersCount = in.readInt();
-        this.watchersCount = in.readInt();
-    }
-
-    public static final Creator<Repo> CREATOR = new Creator<Repo>() {
-
-        public Repo createFromParcel(Parcel source) {
-            return new Repo(source);
-        }
-
-        public Repo[] newArray(int size) {
-            return new Repo[size];
-        }
-    };
 }

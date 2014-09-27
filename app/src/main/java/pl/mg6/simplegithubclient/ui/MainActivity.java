@@ -12,6 +12,10 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnEditorAction;
+import butterknife.OnItemClick;
 import de.greenrobot.event.EventBus;
 import pl.mg6.simplegithubclient.R;
 import pl.mg6.simplegithubclient.SimpleGithubClientPrefs;
@@ -33,14 +37,18 @@ public final class MainActivity extends BaseActivity {
 
     private ArrayList<User> idols;
 
-    private ListView idolsView;
-    private TextView emptyView;
-    private EditText fanEdit;
+    @InjectView(R.id.main_idols_list)
+    ListView idolsView;
+    @InjectView(R.id.main_empty_view)
+    TextView emptyView;
+    @InjectView(R.id.main_fan_edit)
+    EditText fanEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        ButterKnife.inject(this);
         if (savedInstanceState != null) {
             this.idols = savedInstanceState.getParcelableArrayList(KEY_IDOLS);
         }
@@ -68,34 +76,25 @@ public final class MainActivity extends BaseActivity {
     }
 
     private void initIdolsView() {
-        idolsView = (ListView) findViewById(R.id.main_idols_list);
-        emptyView = (TextView) findViewById(R.id.main_empty_view);
-        idolsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onIdolClick(position);
-            }
-        });
         idolsView.setEmptyView(emptyView);
     }
 
     private void initFanEdit() {
-        fanEdit = (EditText) findViewById(R.id.main_fan_edit);
         fanEdit.setText(prefs.getFanName());
-        fanEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (fanEdit.length() > 0) {
-                    String fanName = fanEdit.getText().toString();
-                    prefs.setFanName(fanName);
-                    loadIdols();
-                }
-                return true;
-            }
-        });
     }
 
-    private void onIdolClick(int position) {
+    @OnEditorAction(R.id.main_fan_edit)
+    protected boolean fanNameChanged() {
+        if (fanEdit.length() > 0) {
+            String fanName = fanEdit.getText().toString();
+            prefs.setFanName(fanName);
+            loadIdols();
+        }
+        return true;
+    }
+
+    @OnItemClick(R.id.main_idols_list)
+    protected void onIdolClick(int position) {
         User idol = idols.get(position);
         DetailsActivity.intent(this)
                 .idol(idol)
