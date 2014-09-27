@@ -14,6 +14,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import icepick.Icepick;
+import icepick.Icicle;
 import pl.mg6.simplegithubclient.R;
 import pl.mg6.simplegithubclient.SimpleGithubClientPrefs;
 import pl.mg6.simplegithubclient.api.GithubClient;
@@ -25,7 +27,6 @@ import pl.mg6.simplegithubclient.ui.adapter.ReposAdapter;
 public final class DetailsActivity extends BaseActivity {
 
     private static final String EXTRA_IDOL = "idol";
-    private static final String KEY_REPOS = "repos";
 
     @Inject
     GithubClient client;
@@ -35,7 +36,9 @@ public final class DetailsActivity extends BaseActivity {
     SimpleGithubClientPrefs prefs;
 
     private User idol;
-    private ArrayList<Repo> repos;
+
+    @Icicle
+    ArrayList<Repo> repos;
 
     private ListView reposView;
     private ReposAdapter adapter;
@@ -46,9 +49,7 @@ public final class DetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_activity);
         this.idol = getIntent().getParcelableExtra(EXTRA_IDOL);
-        if (savedInstanceState != null) {
-            this.repos = savedInstanceState.getParcelableArrayList(KEY_REPOS);
-        }
+        Icepick.restoreInstanceState(this, savedInstanceState);
         eventBus.register(this);
         initReposView();
         if (this.repos == null) {
@@ -105,7 +106,7 @@ public final class DetailsActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(KEY_REPOS, repos);
+        Icepick.saveInstanceState(this, outState);
     }
 
     @Override
