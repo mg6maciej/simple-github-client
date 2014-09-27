@@ -14,6 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import hugo.weaving.DebugLog;
 import pl.mg6.simplegithubclient.R;
 import pl.mg6.simplegithubclient.SimpleGithubClientPrefs;
 import pl.mg6.simplegithubclient.api.GithubClient;
@@ -42,6 +43,7 @@ public final class DetailsActivity extends BaseActivity {
     private TextView emptyView;
 
     @Override
+    @DebugLog
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_activity);
@@ -66,6 +68,7 @@ public final class DetailsActivity extends BaseActivity {
     }
 
     @SuppressWarnings("unused")
+    @DebugLog
     public void onEvent(GetReposResponseEvent event) {
         this.repos = new ArrayList<Repo>(event.getRepos());
         updateReposView();
