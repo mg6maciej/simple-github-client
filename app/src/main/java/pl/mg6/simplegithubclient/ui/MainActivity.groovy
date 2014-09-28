@@ -1,34 +1,37 @@
-package pl.mg6.simplegithubclient.ui;
+package pl.mg6.simplegithubclient.ui
 
-import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.os.Bundle
+import android.view.KeyEvent
+import android.view.View
+import android.widget.AdapterView
+import android.widget.EditText
+import android.widget.ListView
+import android.widget.TextView
+import de.greenrobot.event.EventBus
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
+import pl.mg6.simplegithubclient.R
+import pl.mg6.simplegithubclient.SimpleGithubClientPrefs
+import pl.mg6.simplegithubclient.api.GithubClient
+import pl.mg6.simplegithubclient.data.User
+import pl.mg6.simplegithubclient.event.GetIdolsResponseEvent
+import pl.mg6.simplegithubclient.ui.adapter.IdolsAdapter
 
-import java.util.ArrayList;
+import javax.inject.Inject
 
-import javax.inject.Inject;
-
-import de.greenrobot.event.EventBus;
-import pl.mg6.simplegithubclient.R;
-import pl.mg6.simplegithubclient.SimpleGithubClientPrefs;
-import pl.mg6.simplegithubclient.api.GithubClient;
-import pl.mg6.simplegithubclient.data.User;
-import pl.mg6.simplegithubclient.event.GetIdolsResponseEvent;
-import pl.mg6.simplegithubclient.ui.adapter.IdolsAdapter;
-
+@CompileStatic
 public final class MainActivity extends BaseActivity {
 
     private static final String KEY_IDOLS = "idols";
 
     @Inject
+    @PackageScope
     GithubClient client;
     @Inject
+    @PackageScope
     EventBus eventBus;
     @Inject
+    @PackageScope
     SimpleGithubClientPrefs prefs;
 
     private ArrayList<User> idols;
@@ -55,9 +58,10 @@ public final class MainActivity extends BaseActivity {
     }
 
     private void loadIdols() {
-        User fan = User.builder().login(fanEdit.getText().toString()).build();
+        String name = fanEdit.getText().toString()
+        User fan = new User(login: name)
         client.getIdols(fan);
-        idolsView.setAdapter(null);
+        idolsView.adapter = null
         emptyView.setText("Loading...");
     }
 
@@ -68,31 +72,25 @@ public final class MainActivity extends BaseActivity {
     }
 
     private void initIdolsView() {
-        idolsView = (ListView) findViewById(R.id.main_idols_list);
-        emptyView = (TextView) findViewById(R.id.main_empty_view);
-        idolsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onIdolClick(position);
-            }
-        });
+        idolsView = findViewById(R.id.main_idols_list) as ListView
+        emptyView = findViewById(R.id.main_empty_view) as TextView
+        idolsView.onItemClickListener = { AdapterView<?> parent, View view, int position, long id ->
+            onIdolClick(position);
+        }
         idolsView.setEmptyView(emptyView);
     }
 
     private void initFanEdit() {
         fanEdit = (EditText) findViewById(R.id.main_fan_edit);
         fanEdit.setText(prefs.getFanName());
-        fanEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (fanEdit.length() > 0) {
-                    String fanName = fanEdit.getText().toString();
-                    prefs.setFanName(fanName);
-                    loadIdols();
-                }
-                return true;
+        fanEdit.onEditorActionListener = { TextView v, int actionId, KeyEvent event ->
+            if (fanEdit.length() > 0) {
+                String fanName = fanEdit.getText().toString();
+                prefs.setFanName(fanName);
+                loadIdols();
             }
-        });
+            return true;
+        }
     }
 
     private void onIdolClick(int position) {
